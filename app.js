@@ -5,12 +5,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { errors } from 'celebrate';
 
-import routerUser from './routes/users.js';
-import routerMovie from './routes/movies.js';
-import routerSignin from './routes/signin.js';
-import routerSignup from './routes/signup.js';
+import router from './routes/index.js';
 
-import auth from './middlewares/auth.js';
 import errorHandler from './middlewares/errorHandler.js';
 import { requestLogger, errorLogger } from './middlewares/logger.js';
 
@@ -29,13 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(requestLogger);
 
-app.use('/signin', routerSignin);
-app.use('/signup', routerSignup);
-
-app.use(auth);
-
-app.use('/users', routerUser);
-app.use('/movies', routerMovie);
+app.use(router);
 
 app.use(errorLogger);
 app.use(errors());
