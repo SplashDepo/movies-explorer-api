@@ -24,6 +24,7 @@ const { registrationSuccess } = RESPONSE_MESSAGES[201].users;
 
 const loginUser = (req, res, next) => {
   const { email, password } = req.body;
+  console.log(req.body);
 
   if (!PASSWORD_REGEX.test(password)) {
     throw new InaccurateDataError(passwordRequirements);
@@ -60,7 +61,7 @@ const createUser = (req, res, next) => {
       password: hash,
       name,
     }))
-    .then(() => res.status(201).send({ message: registrationSuccess }))
+    .then(() => res.status(201).send({ message: registrationSuccess, email, password }))
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError(emailDuplication));
