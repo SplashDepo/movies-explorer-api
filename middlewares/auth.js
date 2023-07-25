@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import UnauthorizedError from '../utils/errors/UnauthorizedError.js';
 import { RESPONSE_MESSAGES } from '../utils/constants.js';
+import { NODE_ENV, SECRET_SIGNING_KEY } from '../utils/config.js';
 
 const { unathorized } = RESPONSE_MESSAGES[401].users;
 
@@ -16,7 +17,7 @@ const auth = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'dev-secret');
+    payload = jwt.verify(token, NODE_ENV === 'production' ? SECRET_SIGNING_KEY : 'dev-secret');
   } catch (err) {
     return next(new UnauthorizedError(unathorized));
   }

@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 
 import { RESPONSE_MESSAGES, PASSWORD_REGEX } from '../utils/constants.js';
+import { NODE_ENV, SECRET_SIGNING_KEY } from '../utils/config.js';
 import UnauthorizedError from '../utils/errors/UnauthorizedError.js';
 import ConflictError from '../utils/errors/ConflictError.js';
 import NotFoundError from '../utils/errors/NotFoundError.js';
@@ -36,7 +37,7 @@ const loginUser = (req, res, next) => {
       if (_id) {
         const token = jwt.sign(
           { _id },
-          'dev-secret',
+          NODE_ENV === 'production' ? SECRET_SIGNING_KEY : 'dev-secret',
           { expiresIn: '7d' },
         );
 
