@@ -1,7 +1,6 @@
-export default class ForbiddenError extends Error {
+module.exports = class ForbiddenError extends Error {
   constructor(message) {
     super(message);
-    this.name = 'NotOwnerError';
     this.statusCode = 403;
   }
-}
+};

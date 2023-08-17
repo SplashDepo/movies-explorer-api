@@ -1,16 +1,14 @@
-import { Router } from 'express';
+const router = require('express').Router();
 
-import routeSignup from './signup.js';
-import routeSignin from './signin.js';
+const routeSignup = require('./signup');
+const routeSignin = require('./signin');
 
-import auth from '../middlewares/auth.js';
+const auth = require('../middlewares/auth');
 
-import routeUsers from './users.js';
-import routeMovies from './movies.js';
+const routeUsers = require('./users');
+const routeMovies = require('./movies');
 
-import NotFoundError from '../utils/errors/NotFoundError.js';
-
-const router = Router();
+const NOT_FOUND_ERROR = require('../utils/errors/NotFoundError');
 
 router.use('/', routeSignup);
 router.use('/', routeSignin);
@@ -20,6 +18,6 @@ router.use(auth);
 router.use('/users', routeUsers);
 router.use('/movies', routeMovies);
 
-router.use((req, res, next) => next(new NotFoundError('Страницы по запрошенному URL не существует')));
+router.use((req, res, next) => next(new NOT_FOUND_ERROR('Страницы по запрошенному URL не существует')));
 
-export default router;
+module.exports = router;

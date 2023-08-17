@@ -1,30 +1,36 @@
-import 'dotenv/config.js';
-import express from 'express';
-import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import helmet from 'helmet';
-import { errors } from 'celebrate';
+require('dotenv').config();
 
-import router from './routes/index.js';
+const express = require('express');
+const mongoose = require('mongoose');
+const helmet = require('helmet');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const { errors } = require('celebrate');
 
-import errorHandler from './middlewares/errorHandler.js';
-import { requestLogger, errorLogger } from './middlewares/logger.js';
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const limiter = require('./middlewares/rateLimiter');
 
-const { PORT = 3000, URL_MONGO = 'mongodb://127.0.0.1:27017/bitfilmsdb' } = process.env;
+const router = require('./routes/index');
 
-mongoose.connect(URL_MONGO)
-  .then(() => console.log('Connect DB'))
-  .catch((err) => console.log(err));
+const errorHandler = require('./middlewares/errorHandler');
+
+const { MONGODB_URL } = require('./utils/config');
+
+const { PORT = 3001 } = process.env;
 
 const app = express();
+
 app.use(cors());
 app.use(helmet());
+
+mongoose.set('strictQuery', true);
+mongoose.connect(MONGODB_URL);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(requestLogger);
+app.use(limiter);
 
 app.use(router);
 
@@ -32,6 +38,4 @@ app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log('App start');
-});
+app.listen(PORT);

@@ -1,54 +1,66 @@
-import mongoose from 'mongoose';
-import validator from 'validator';
-import bcrypt from 'bcrypt';
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
-import NotFoundError from '../utils/errors/NotFoundError.js';
-import { RESPONSE_MESSAGES } from '../utils/constants.js';
+const { Schema } = mongoose;
+
+const NOT_FOUND_ERROR = require('../utils/errors/NotFoundError');
+const RESPONSE_MESSAGES = require('../utils/constants');
 
 const { emailRegistration } = RESPONSE_MESSAGES[404].users;
 
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-    validate: {
-      validator: (email) => validator.isEmail(email),
-      message: 'Неверно указана почта',
+const { EMAIL_REGEX } = require('../utils/validation');
+
+const userSchema = new Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: (email) => EMAIL_REGEX.test(email),
+        message: 'Требуется ввести электронный адрес',
+      },
+    },
+
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+
+    name: {
+      type: String,
+      required: true,
+      validate: {
+        validator: ({ length }) => length >= 2 && length <= 30,
+        message: 'Имя пользователя должно быть длиной от 2 до 30 символов',
+      },
     },
   },
-  password: {
-    type: String,
-    required: true,
-    select: false,
-  },
-  name: {
-    type: String,
-    minlength: [2, 'Имя не может быть короче 2 символов'],
-    maxlength: [30, 'Имя не может быть длиннее 30 символов'],
-  },
-}, {
-  statics: {
-    findUserByCredentials(email, password) {
-      return (
-        this
-          .findOne({ email })
-          .select('+password')
-      )
-        .then((user) => {
-          if (user) {
-            return bcrypt.compare(password, user.password)
-              .then((matched) => {
-                if (matched) return user;
 
-                return Promise.reject();
-              });
-          }
+  {
+    statics: {
+      findUserByCredentials(email, password) {
+        return (
+          this
+            .findOne({ email })
+            .select('+password')
+        )
+          .then((user) => {
+            if (user) {
+              return bcrypt.compare(password, user.password)
+                .then((matched) => {
+                  if (matched) return user;
 
-          throw new NotFoundError(emailRegistration);
-        });
+                  return Promise.reject();
+                });
+            }
+
+            throw new NOT_FOUND_ERROR(emailRegistration);
+          });
+      },
     },
   },
-});
+);
 
-export default mongoose.model('User', userSchema);
+module.exports = mongoose.model('user', userSchema);

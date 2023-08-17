@@ -1,9 +1,8 @@
-import { Router } from 'express';
-import { loginUserValidation } from '../utils/validation.js';
-import { loginUser } from '../controllers/userController.js';
+const router = require('express').Router();
 
-const router = Router();
+const { loginUserValidation } = require('../utils/validation');
+const { loginUser } = require('../controllers/users');
 
 router.post('/signin', loginUserValidation, loginUser);
 
-export default router;
+module.exports = router;

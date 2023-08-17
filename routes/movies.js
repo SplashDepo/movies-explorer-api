@@ -1,11 +1,14 @@
-import { Router } from 'express';
-import { createMovieValidation, deleteMovieValidation } from '../utils/validation.js';
-import { getSavedMovies, createMovie, deleteMovie } from '../controllers/movieController.js';
+const router = require('express').Router();
 
-const router = Router();
+const { createMovieValidation, deleteMovieValidation } = require('../utils/validation');
+const {
+  createMovie,
+  receiveMovies,
+  deleteMovie,
+} = require('../controllers/movies');
 
-router.get('/', getSavedMovies);
 router.post('/', createMovieValidation, createMovie);
+router.get('/', receiveMovies);
 router.delete('/:id', deleteMovieValidation, deleteMovie);
 
-export default router;
+module.exports = router;

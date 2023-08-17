@@ -1,16 +1,18 @@
-import jwt from 'jsonwebtoken';
-import UnauthorizedError from '../utils/errors/UnauthorizedError.js';
-import { RESPONSE_MESSAGES } from '../utils/constants.js';
-import { NODE_ENV, SECRET_SIGNING_KEY } from '../utils/config.js';
+const jwt = require('jsonwebtoken');
+
+const { NODE_ENV, SECRET_SIGNING_KEY } = require('../utils/config');
+
+const UNAUTHORIZED_ERROR = require('../utils/errors/UnauthorizedError'); // 401
+const RESPONSE_MESSAGES = require('../utils/constants');
 
 const { unathorized } = RESPONSE_MESSAGES[401].users;
 
-const auth = (req, res, next) => {
+function authorizeUser(req, _, next) {
   const { authorization } = req.headers;
   const bearer = 'Bearer ';
 
   if (!authorization || !authorization.startsWith(bearer)) {
-    return next(new UnauthorizedError(unathorized));
+    return next(new UNAUTHORIZED_ERROR(unathorized));
   }
 
   const token = authorization.replace(bearer, '');
@@ -19,12 +21,12 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, NODE_ENV === 'production' ? SECRET_SIGNING_KEY : 'dev-secret');
   } catch (err) {
-    return next(new UnauthorizedError(unathorized));
+    return next(new UNAUTHORIZED_ERROR(unathorized));
   }
 
   req.user = payload;
 
   return next();
-};
+}
 
-export default auth;
+module.exports = authorizeUser;

@@ -1,8 +1,11 @@
-import mongoose from 'mongoose';
-// import validator from 'validator';
-import { URL_REGEX } from '../utils/constants.js';
+const mongoose = require('mongoose');
 
-const movieSchema = new mongoose.Schema(
+const { Schema } = mongoose;
+const { ObjectId } = Schema.Types;
+
+const { URL_REGEX } = require('../utils/validation');
+
+const movieSchema = new Schema(
   {
     country: {
       type: String,
@@ -57,7 +60,7 @@ const movieSchema = new mongoose.Schema(
     },
 
     owner: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: ObjectId,
       ref: 'user',
       required: true,
     },
@@ -79,4 +82,4 @@ const movieSchema = new mongoose.Schema(
   },
 );
 
-export default mongoose.model('Movie', movieSchema);
+module.exports = mongoose.model('movie', movieSchema);

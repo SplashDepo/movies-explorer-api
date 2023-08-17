@@ -1,4 +1,4 @@
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, _, res, next) => {
   const statusCode = err.statusCode || 500;
 
   const message = statusCode === 500 ? 'На сервере произошла ошибка' : err.message;
@@ -6,4 +6,4 @@ const errorHandler = (err, req, res, next) => {
   next();
 };
 
-export default errorHandler;
+module.exports = errorHandler;

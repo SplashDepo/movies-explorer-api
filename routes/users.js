@@ -1,10 +1,9 @@
-import { Router } from 'express';
-import { setCurrentUserInfoValidation } from '../utils/validation.js';
-import { getCurrentUserInfo, setCurrentUserInfo } from '../controllers/userController.js';
+const router = require('express').Router();
 
-const router = Router();
+const { setCurrentUserInfoValidation } = require('../utils/validation');
+const { getCurrentUserInfo, setCurrentUserInfo } = require('../controllers/users');
 
 router.get('/me', getCurrentUserInfo);
 router.patch('/me', setCurrentUserInfoValidation, setCurrentUserInfo);
 
-export default router;
+module.exports = router;

@@ -1,6 +1,3 @@
-const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
-const PASSWORD_REGEX = /^(?=.*[A-z])(?=.*\d)(?=.*[!@#$%^&*])(?=.{8,})/;
-
 const RESPONSE_MESSAGES = {
   200: {
     movies: {
@@ -62,8 +59,4 @@ const RESPONSE_MESSAGES = {
   },
 };
 
-export {
-  URL_REGEX,
-  RESPONSE_MESSAGES,
-  PASSWORD_REGEX,
-};
+module.exports = RESPONSE_MESSAGES;
